@@ -24,6 +24,7 @@ A simple Python-based Notification System demonstrating three creational design 
 This project showcases how to implement common creational design patterns in Python within a simple Notification System. The system supports creating and sending different types of notifications, such as Email, SMS, and Push notifications, each of which is handled through different design patterns to illustrate their practical use.
 
 ## Objectives
+
 1. Study and understand the Creational Design Patterns.
 
 2. Choose a domain, define its main classes/models/entities and choose the appropriate instantiation mechanisms.
@@ -31,18 +32,20 @@ This project showcases how to implement common creational design patterns in Pyt
 3. Use some creational design patterns for object instantiation in a sample project.
 
 ## Some Theory
+
 In software engineering, the creational design patterns are the general solutions that deal with object creation, trying to create objects in a manner suitable to the situation. The basic form of object creation could result in design problems or added complexity to the design. Creational design patterns solve this problem by optimizing, hiding or controlling the object creation.
 
 Some examples of this kind of design patterns are:
 
-- **Singleton
-- **Builder
-- **Prototype
-- **Object Pooling
-- **Factory Method
-- **Abstract Factory
+- Singleton
+- Builder
+- Prototype
+- Object Pooling
+- Factory Method
+- Abstract Factory
 
 ## Main Tasks
+
 1. Choose an OO programming language and a suitable IDE or Editor (No frameworks/libs/engines allowed).
 
 2. Select a domain area for the sample project.
@@ -50,8 +53,6 @@ Some examples of this kind of design patterns are:
 3. Define the main involved classes and think about what instantiation mechanisms are needed.
 
 4. Based on the previous point, implement atleast 3 creational design patterns in your project.
-
-
 
 ## Features
 
@@ -232,46 +233,64 @@ python3 -m client.main
 
 ```
 
-### Diagram 
+### Diagram
 
-\documentclass{article}
-\usepackage{tikz}
-\usetikzlibrary{arrows.meta, positioning}
+```mermaid
+classDiagram
+    direction TB
 
-\begin{document}
+    class NotificationManager {
+        <<Singleton>>
+        -notifications: List~Notification~
+        +add_notification(notification)
+        +send_all()
+    }
 
-\begin{tikzpicture}[
-    font=\sffamily,
-    node distance=1.5cm and 2.5cm,
-    box/.style={draw, fill=blue!10, rounded corners, minimum height=1.2cm, minimum width=2.5cm, align=center},
-    title/.style={font=\bfseries},
-    arrow/.style={-Stealth, thick, draw=blue!70}
-]
+    class NotificationFactory {
+        <<Factory Method>>
+        +create_notification(type, recipient, message, extras)
+    }
 
-% Nodes
-\node[box, title] (manager) {NotificationManager\\(Singleton)};
-\node[box, title, left=of manager] (builder) {NotificationBuilder\\(Builder)};
-\node[box, title, right=of manager] (factory) {NotificationFactory\\(Factory Method)};
+    class NotificationBuilder {
+        <<Builder>>
+        +set_recipient(recipient)
+        +set_message(message)
+        +set_notification_type(type)
+        +set_extra_param(key, value)
+        +build() Notification
+    }
 
-% Notifications created by Factory
-\node[box, below left=0.5cm and 1.5cm of factory] (email) {EmailNotification};
-\node[box, below=0.75cm of factory] (sms) {SMSNotification};
-\node[box, below right=0.5cm and 1.5cm of factory] (push) {PushNotification};
+    class Notification {
+        <<abstract>>
+        +recipient: String
+        +message: String
+        +send()
+    }
 
-% Arrows
-\draw[arrow] (manager) -- (email) node[midway, right] {send};
-\draw[arrow] (manager) -- (sms) node[midway, right] {send};
-\draw[arrow] (manager) -- (push) node[midway, right] {send};
+    class EmailNotification {
+        +subject: String
+        +sender_email: String
+        +send()
+    }
 
-\draw[arrow] (factory) -- (email) node[midway, right] {create};
-\draw[arrow] (factory) -- (sms) node[midway, right] {create};
-\draw[arrow] (factory) -- (push) node[midway, right] {create};
+    class SMSNotification {
+        +phone_number: String
+        +send()
+    }
 
-\draw[arrow] (builder) -- (email) node[midway, above] {build};
+    class PushNotification {
+        +device_id: String
+        +send()
+    }
 
-% Labels
-\node[below=0.75cm of sms, font=\bfseries] {Notification Types};
+    %% Relationships %%
+    NotificationManager o-- Notification : "manages"
+    NotificationManager ..> NotificationFactory : "uses"
+    NotificationManager ..> NotificationBuilder : "uses"
 
-\end{tikzpicture}
+    NotificationFactory --|> Notification : "creates"
+    NotificationBuilder --|> Notification : "builds"
 
-\end{document}
+    Notification <|-- EmailNotification
+    Notification <|-- SMSNotification
+    Notification <|-- PushNotifications
