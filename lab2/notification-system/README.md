@@ -1,10 +1,13 @@
 # Notification System
 
+## Creational Design Patterns
+
 A simple Python-based Notification System demonstrating three creational design patterns: **Factory Method**, **Singleton**, and **Builder**.
 
 ## Table of Contents
 
 - [Introduction](#introduction)
+
 - [Design Patterns Implemented](#design-patterns-implemented)
   - [Factory Method](#factory-method)
   - [Singleton](#singleton)
@@ -19,6 +22,47 @@ A simple Python-based Notification System demonstrating three creational design 
 ## Introduction
 
 This project showcases how to implement common creational design patterns in Python within a simple Notification System. The system supports creating and sending different types of notifications, such as Email, SMS, and Push notifications, each of which is handled through different design patterns to illustrate their practical use.
+
+## Objectives
+1. Study and understand the Creational Design Patterns.
+
+2. Choose a domain, define its main classes/models/entities and choose the appropriate instantiation mechanisms.
+
+3. Use some creational design patterns for object instantiation in a sample project.
+
+## Some Theory
+In software engineering, the creational design patterns are the general solutions that deal with object creation, trying to create objects in a manner suitable to the situation. The basic form of object creation could result in design problems or added complexity to the design. Creational design patterns solve this problem by optimizing, hiding or controlling the object creation.
+
+Some examples of this kind of design patterns are:
+
+- **Singleton
+- **Builder
+- **Prototype
+- **Object Pooling
+- **Factory Method
+- **Abstract Factory
+
+## Main Tasks
+1. Choose an OO programming language and a suitable IDE or Editor (No frameworks/libs/engines allowed).
+
+2. Select a domain area for the sample project.
+
+3. Define the main involved classes and think about what instantiation mechanisms are needed.
+
+4. Based on the previous point, implement atleast 3 creational design patterns in your project.
+
+
+
+## Features
+
+- **Flexible Notification Creation**: Supports creating Email, SMS, and Push notifications with easy extensibility for new types.
+- **Design Patterns Implemented**:
+  - **Factory Method** for dynamic creation of notification types.
+  - **Singleton** to ensure a single instance of `NotificationManager` for managing notifications.
+  - **Builder** to allow for customized notification construction.
+- **Centralized Notification Management**: Manages and dispatches notifications from a central manager (`NotificationManager`).
+- **Easily Extendable**: Add new notification types by creating a class and updating the factory without modifying core logic.
+- **Unit Testing**: Includes unit tests to ensure that each component works as expected.
 
 ## Design Patterns Implemented
 
@@ -187,3 +231,47 @@ python3 -m client.main
 
 
 ```
+
+### Diagram 
+
+\documentclass{article}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning}
+
+\begin{document}
+
+\begin{tikzpicture}[
+    font=\sffamily,
+    node distance=1.5cm and 2.5cm,
+    box/.style={draw, fill=blue!10, rounded corners, minimum height=1.2cm, minimum width=2.5cm, align=center},
+    title/.style={font=\bfseries},
+    arrow/.style={-Stealth, thick, draw=blue!70}
+]
+
+% Nodes
+\node[box, title] (manager) {NotificationManager\\(Singleton)};
+\node[box, title, left=of manager] (builder) {NotificationBuilder\\(Builder)};
+\node[box, title, right=of manager] (factory) {NotificationFactory\\(Factory Method)};
+
+% Notifications created by Factory
+\node[box, below left=0.5cm and 1.5cm of factory] (email) {EmailNotification};
+\node[box, below=0.75cm of factory] (sms) {SMSNotification};
+\node[box, below right=0.5cm and 1.5cm of factory] (push) {PushNotification};
+
+% Arrows
+\draw[arrow] (manager) -- (email) node[midway, right] {send};
+\draw[arrow] (manager) -- (sms) node[midway, right] {send};
+\draw[arrow] (manager) -- (push) node[midway, right] {send};
+
+\draw[arrow] (factory) -- (email) node[midway, right] {create};
+\draw[arrow] (factory) -- (sms) node[midway, right] {create};
+\draw[arrow] (factory) -- (push) node[midway, right] {create};
+
+\draw[arrow] (builder) -- (email) node[midway, above] {build};
+
+% Labels
+\node[below=0.75cm of sms, font=\bfseries] {Notification Types};
+
+\end{tikzpicture}
+
+\end{document}
