@@ -26,7 +26,35 @@ This project showcases how to implement common creational design patterns in Pyt
 
 **Purpose:** Defines an interface for creating an object but allows subclasses to alter the type of objects that will be created.
 
-**Implementation:** The NotificationFactory class in the factory module provides a static method, create_notification, which returns an instance of EmailNotification, SMSNotification, or PushNotification based on the notification_type parameter.
+**Implementation:** The NotificationFactory class in the factory module provides a static method, create_notification, which returns an instance of EmailNotification, SMSNotification, or PushNotification based on the notification_type parameter. This approach allows for easy extensibility—if you want to add new notification types in the future, you just need to add a new class for the notification type and update the factory method without modifying existing code.
+
+**Snippet**
+
+```# factory/notification_factory.py
+
+class NotificationFactory:
+    @staticmethod
+    def create_notification(notification_type, recipient, message, **kwargs):
+        if notification_type == 'email':
+            return EmailNotification(recipient, message, kwargs.get('subject', 'No Subject'), kwargs.get('sender_email', 'no-reply@example.com'))
+        elif notification_type == 'sms':
+            return SMSNotification(recipient, message, kwargs.get('phone_number'))
+        elif notification_type == 'push':
+            return PushNotification(recipient, message, kwargs.get('device_id'))
+        else:
+            raise ValueError(f"Unknown type: {notification_type}")
+```
+
+**Usage**
+
+```# Create an Email Notification
+email = NotificationFactory.create_notification(
+    'email', 'user@example.com', 'Welcome!', subject='Greetings', sender_email='support@example.com'
+)
+
+# Send the notification
+email.send()
+```
 
 ### Singleton
 
@@ -52,7 +80,41 @@ This project showcases how to implement common creational design patterns in Pyt
 
 **Implementation:** The Builder pattern is useful for creating objects step-by-step with optional fields. The NotificationBuilder class lets us create a notification and add extra fields only if needed.
 
-**Snippet**:
+**Snippet**
+
+```# domain/notification_builder.py
+
+class NotificationBuilder:
+    def __init__(self):
+        self.notification_data = {}
+
+    def set_recipient(self, recipient):
+        self.notification_data['recipient'] = recipient
+        return self
+
+    def set_message(self, message):
+        self.notification_data['message'] = message
+        return self
+
+    def set_notification_type(self, notification_type):
+        self.notification_data['type'] = notification_type
+        return self
+
+    def set_extra_param(self, key, value):
+        self.notification_data[key] = value
+        return self
+
+    def build(self):
+        if self.notification_data['type'] == 'email':
+            return EmailNotification(self.notification_data['recipient'], self.notification_data['message'],
+                                     self.notification_data.get('subject', 'No Subject'))
+        elif self.notification_data['type'] == 'sms':
+            return SMSNotification(self.notification_data['recipient'], self.notification_data['message'])
+        else:
+            raise ValueError("Invalid notification type")
+```
+
+**Usage**:
 
 ```from domain.notification_builder import NotificationBuilder
 
@@ -108,3 +170,20 @@ The project is structured into several modules:
 - `tests`: Holds unit tests for validating the functionality of the system, including the Singleton pattern.
 - `README.md`: Project documentation
 - `main`: Entry point of the application.
+
+## Setup and Installation
+
+### Clone the Repository:
+
+```bash
+git clone https://github.com/dariabriannaa/notification-system.git
+cd lab2/notification-system
+
+Install dependecies
+pip install -r requirements.txt
+
+Running the Application
+python3 -m client.main
+
+
+```
