@@ -42,20 +42,32 @@ In software engineering, **Structural Design Patterns** focus on the organizatio
 
 ## Design Patterns Implemented
 
-### Facade Pattern
+## Facade Pattern
 
-**Purpose**:The Facade Pattern provides a simplified interface to a complex subsystem, hiding the complexities and making it easier to use. The goal is to provide a higher-level interface that makes a system easier to use and understand.
+### **Purpose**
+The **Facade Pattern** provides a simplified interface to a complex subsystem, hiding the complexities and making it easier to use. The goal is to provide a **higher-level interface** that makes a system easier to use and understand.
 
-**Implementation**: The `NotificationFacade` class provides a simplified interface for sending Email, SMS, and Push notifications. This hides the complexity of managing different notification types behind a unified method.
-Use the Facade Pattern when:
+### **When to Use**
+Use the **Facade Pattern** when:
 
-You want to provide a simplified interface to a complex system of objects.
-The system has a large number of interdependent classes, and you want to reduce the coupling by abstracting that complexity.
-You want to make the system easier to use for the client without exposing the internal workings.
+- You want to **provide a simplified interface** to a complex system of objects.
+- The system has a large number of **interdependent classes**, and you want to **reduce coupling** by abstracting that complexity.
+- You want to make the system easier to use for the client without exposing the internal workings.
 
-**Structure**
-Facade: The class that provides a simplified, unified interface to the complex subsystem. The facade delegates the work to the appropriate classes in the subsystem.
-Subsystems: These are the classes that implement the complex logic, which the facade hides. The facade coordinates calls to these subsystems.
+### **Implementation**
+The `NotificationFacade` class provides a simplified interface for sending **Email**, **SMS**, and **Push** notifications. This hides the complexity of managing different notification types behind a unified method.
+
+### **Structure**
+1. **Facade**:
+   - The **Facade** class provides a simplified, unified interface to the complex subsystem. 
+   - The facade delegates the work to the appropriate classes in the subsystem.
+   - It provides a high-level method for the client to interact with, making the system easier to use.
+
+2. **Subsystems**:
+   - These are the classes that implement the **complex logic**, which the facade hides.
+   - The facade coordinates calls to these subsystems but doesn’t expose their internal details to the client.
+
+### **Example Implementation**
 
 ```python
 # facade/notification_facade.py
@@ -117,18 +129,38 @@ if __name__ == "__main__":
 ```
 
 ## Composite Pattern
-**Purpose**: The Composite Pattern is used to treat individual objects and compositions of objects uniformly. This pattern allows you to compose objects into tree-like structures to represent part-whole hierarchies. It is particularly useful when you need to treat groups of objects (composites) in the same way as individual objects.
-**Implementation**: Use the Composite Pattern when:
 
-You need to represent part-whole hierarchies.
-You want to treat individual objects and their compositions (groups of objects) uniformly.
-The structure of objects is hierarchical or tree-like.
-For example, in a notification system, you might want to group individual notifications (like email, SMS, or push notifications) into a single composite notification that can be sent as one unit.
-**Structure**: 
-Component: The interface that both the concrete component and decorators will implement. This defines the operations that can be performed on the objects.
-Concrete Component: The original object being decorated, e.g., a basic Notification object.
-Decorator: The abstract class that wraps the concrete component and adds additional functionality (e.g., logging, validation).
-Concrete Decorators: These are the actual classes that implement the additional behavior. For example, LoggingDecorator or ValidationDecorator can extend the behavior of the Notification object.
+### **Purpose**
+The **Composite Pattern** is used to treat individual objects and compositions of objects uniformly. This pattern allows you to compose objects into tree-like structures to represent part-whole hierarchies. It is particularly useful when you need to treat groups of objects (composites) in the same way as individual objects.
+
+### **When to Use**
+Use the **Composite Pattern** when:
+
+- You need to represent **part-whole hierarchies**.
+- You want to treat individual objects and their compositions (groups of objects) **uniformly**.
+- The structure of objects is **hierarchical** or **tree-like**.
+
+For example, in a notification system, you might want to group individual notifications (like **email**, **SMS**, or **push notifications**) into a single **composite notification** that can be sent as one unit.
+
+### **Structure**
+
+The **Composite Pattern** has the following components:
+
+1. **Component**:
+   - The **interface** that both the concrete component and decorators will implement.
+   - This defines the operations that can be performed on the objects (e.g., `send()`).
+
+2. **Concrete Component**:
+   - The **original object** being decorated, e.g., a basic **Notification** object (e.g., `EmailNotification`, `SMSNotification`, `PushNotification`).
+
+3. **Decorator**:
+   - The **abstract class** that wraps the concrete component and adds additional functionality (e.g., logging, validation).
+   
+4. **Concrete Decorators**:
+   - These are the actual classes that implement the additional behavior.
+   - For example, **LoggingDecorator** or **ValidationDecorator** can extend the behavior of the **Notification** object.
+
+### **Example Implementation**
 ```python
 # domain/composite_notification.py
 from models.notification import Notification
@@ -173,6 +205,104 @@ if __name__ == "__main__":
     main()
 ```
 
+
+## Decorator Pattern
+
+### **Purpose**
+The **Decorator Pattern** allows you to dynamically add new responsibilities to an object without altering its structure. It provides a flexible alternative to subclassing for extending functionality.
+
+### **When to Use**
+Use the **Decorator Pattern** when:
+
+- You need to **add responsibilities** to an object without modifying its code.
+- You want to **extend an object’s functionality** dynamically at runtime.
+- You need to **keep the object structure intact** while adding new features or behaviors.
+
+### **Implementation**
+The **Decorator Pattern** is implemented by creating a decorator class that wraps an existing class and extends its behavior. In our Notification System, decorators can be used to add features such as **logging**, **validation**, or **encryption** to the notifications without modifying the core notification classes.
+
+### **Structure**
+1. **Component**:
+   - This is the **interface** that both the concrete component and decorators will implement.
+   - This defines the operations that can be performed on the objects (e.g., `send()`).
+
+2. **Concrete Component**:
+   - This is the **original object** being decorated (e.g., a simple **Notification** object like `EmailNotification`, `SMSNotification`, `PushNotification`).
+
+3. **Decorator**:
+   - This is the **abstract class** that wraps the concrete component and adds additional functionality (e.g., logging, validation).
+   - It implements the same interface as the component to ensure that the decorated object can be used interchangeably.
+
+4. **Concrete Decorators**:
+   - These are the **actual classes** that implement the additional behavior (e.g., **LoggingDecorator** or **ValidationDecorator**).
+   - They enhance or extend the functionality of the original object without changing its structure.
+
+### **Example Implementation**
+
+```python
+# decorators/logging_decorator.py
+class LoggingDecorator:
+    def __init__(self, notification):
+        self._notification = notification  # The notification object to be decorated
+
+    def send(self):
+        # Log before sending the notification
+        print(f"Logging: Sending {self._notification.__class__.__name__} to {self._notification.recipient}")
+        
+        # Call the send method of the actual notification object
+        self._notification.send()
+```
+
+ **Example Implementation**
+ ```python
+ # client/main.py
+from decorators.logging_decorator import LoggingDecorator
+from decorators.validation_decorator import ValidationDecorator
+from facade.notification_facade import NotificationFacade
+from models.email_notification import EmailNotification
+from models.sms_notification import SMSNotification
+from models.push_notification import PushNotification
+
+def main():
+    facade = NotificationFacade()
+
+    # Create Email Notification
+    email = EmailNotification(
+        recipient='john.doe@example.com',
+        message='Hello, Group!',
+        subject='Group Email',
+        sender_email='support@example.com'
+    )
+
+    # Apply LoggingDecorator to add logging functionality
+    validated_email = LoggingDecorator(email)
+    validated_email.send()  # This will log the send operation and then send the email.
+
+    # Create SMS Notification
+    sms = SMSNotification(
+        recipient='Jane Doe',
+        message='Your verification code is 123456.',
+        phone_number='+1234567890'
+    )
+
+    # Apply both Logging and Validation decorators before sending SMS
+    validated_sms = ValidationDecorator(LoggingDecorator(sms))
+    validated_sms.send()  # This will log and validate the SMS before sending it.
+
+    # Create Push Notification
+    push = PushNotification(
+        recipient='User123',
+        message='You have a new friend request.',
+        device_id='device_xyz'
+    )
+
+    # Apply LoggingDecorator to add logging functionality
+    validated_push = LoggingDecorator(push)
+    validated_push.send()  # This will log the send operation and then send the push notification.
+
+if __name__ == "__main__":
+    main()
+```
 
 ## Project Structure
 lab2/notification-system/
